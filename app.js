@@ -1,0 +1,1107 @@
+(function () {
+  // Design dimensions for 16:9 aspect ratio
+  const DESIGN_WIDTH = 1920;
+  const DESIGN_HEIGHT = 1080;
+
+  // Scaling system class as documented in SCALING_TECHNIQUE.md
+  class ScalingSystem {
+    constructor() {
+      this.baseWidth = DESIGN_WIDTH;
+      this.baseHeight = DESIGN_HEIGHT;
+      this.init();
+    }
+    
+    updateScaleFactor() {
+      // Calculate scale ratios
+      const scaleW = window.innerWidth / this.baseWidth;
+      const scaleH = window.innerHeight / this.baseHeight;
+      
+      // Use smaller ratio to ensure fit
+      const scale = Math.min(scaleW, scaleH);
+      
+      // Apply to CSS variable
+      document.documentElement.style.setProperty('--scaleFactor', String(scale));
+      
+      return scale;
+    }
+    
+    init() {
+      // Set initial scale
+      this.updateScaleFactor();
+      
+      // Handle resize events
+      window.addEventListener('resize', () => {
+        this.updateScaleFactor();
+      });
+    }
+  }
+
+  // Initialize scaling system
+  const scalingSystem = new ScalingSystem();
+
+  // Render different pages based on index
+  function renderPage(idx, handlers, texts, answers, pageState = {}) {
+    switch (idx) {
+      case 0: {
+        const t = texts.page1;
+        return React.createElement(
+          'div',
+          { id: 'page1', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'start-screen-container' },
+            // Header section
+            React.createElement(
+              'div',
+              { className: 'start-screen-header' },
+              React.createElement('h1', null, t.title)
+            ),
+            // Content section
+            React.createElement(
+              'div',
+              { className: 'start-screen-content' },
+              React.createElement(
+                'div',
+                { className: 'content-top' },
+                React.createElement('p', null, t.line1),
+                React.createElement('p', null, t.line2),
+                React.createElement('p', null, t.line3)
+              ),
+              React.createElement(
+                'div',
+                { className: 'content-bottom' },
+                React.createElement(
+                  'button',
+                  { className: 'start-button', onClick: handlers.next },
+                  t.startButton
+                )
+              )
+            ),
+            // Footer section
+            React.createElement(
+              'div',
+              { className: 'start-screen-footer' }
+            )
+          )
+        );
+      }
+      case 1: {
+        const t = texts.page2;
+        return React.createElement(
+          'div',
+          { id: 'page2', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'question-screen-container' },
+            React.createElement(
+              'div',
+              { className: 'top-bar' },
+              React.createElement('p', null, "Guess the answer with the information given.")
+            ),
+            React.createElement(
+              'div',
+              { className: 'main-content' },
+              React.createElement(
+                'div',
+                { className: 'question-box' },
+                React.createElement('p', { className: 'question-text' }, "Bus A has 40 kids."),
+                React.createElement('p', { className: 'question-text' }, "Bus B has 30 kids."),
+                React.createElement('h2', { className: 'main-question' }, "Which bus is more crowded?")
+              ),
+              React.createElement(
+                'div',
+                { className: 'options-box' },
+                React.createElement('p', null, t.options_title),
+                React.createElement(
+                  'button',
+                  { className: 'option-button', onClick: handlers.next },
+                  "Bus A"
+                ),
+                React.createElement(
+                  'button',
+                  { className: 'option-button', onClick: handlers.next },
+                  "Bus B"
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, "Tap the 'bus' button you think is correct."),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 2: {
+        const t = texts.page3;
+        return React.createElement(
+          'div',
+          { id: 'page3', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'info-reveal-container' },
+            // Header - 120px height
+            React.createElement('h2', { className: 'info-header' }, t.header),
+            // Main content - 60% height
+            React.createElement(
+              'div',
+              { className: 'info-main-content' },
+              // Left panel - Bus A
+              React.createElement(
+                'div',
+                { className: 'bus-info-panel' },
+                React.createElement('img', { src: 'assets/BusA.png', alt: 'Bus A with 36 seats', className: 'bus-image' }),
+                React.createElement('p', { className: 'bus-caption-blue' }, t.busA_caption1),
+                React.createElement('p', { className: 'bus-caption-yellow-green' }, t.busA_caption2)
+              ),
+              // Right panel - Bus B
+              React.createElement(
+                'div',
+                { className: 'bus-info-panel' },
+                React.createElement('img', { src: 'assets/BusB.png', alt: 'Bus B with 20 seats', className: 'bus-image' }),
+                React.createElement('p', { className: 'bus-caption-blue' }, t.busB_caption1),
+                React.createElement('p', { className: 'bus-caption-yellow-green' }, t.busB_caption2)
+              )
+            ),
+            // Bottom section - 40% height
+            React.createElement(
+              'div',
+              { className: 'info-bottom-section' },
+              React.createElement('p', { className: 'concept-sentence' }, "The more crowded bus is not just about"),
+              React.createElement('p', { className: 'concept-sentence' }, "how many kids are in the bus!"),
+              React.createElement(
+                'button',
+                { className: 'next-button', onClick: handlers.next },
+                t.nextButton
+              )
+            )
+          )
+        );
+      }
+      case 3: {
+        const t = texts.page4;
+        const { filledSeatCountA = 0, isAnimatingA = false } = pageState;
+
+        // Generate grid cells for Bus A with filling animation logic
+        const busAGridCells = [];
+        let seatCounterA = 0;
+        for (let i = 0; i < 45; i++) {
+            const col = i % 5;
+            let cellClass = 'grid-cell';
+            let cellContent = null;
+
+            // Corrected seat logic for 36 seats (cols 0, 1, 3, 4 are seats)
+            if (col === 0 || col === 1 || col === 3 || col === 4) {
+                cellClass += ' seat';
+                if (seatCounterA < filledSeatCountA) {
+                    // Fill with girl image if seat is within the filled count
+                    cellContent = React.createElement('img', { src: 'assets/Girl.png', className: 'student-icon', alt: 'student' });
+                }
+                seatCounterA++;
+            } else if (col === 2) {
+                cellClass += ' pathway';
+            }
+
+            busAGridCells.push(React.createElement('div', {
+                key: i,
+                className: cellClass
+            }, cellContent));
+        }
+
+        return React.createElement(
+          'div',
+          { id: 'page4', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'fill-bus-container' },
+            React.createElement('h2', { className: 'fill-bus-header' }, t.header),
+            // Main content - three columns
+            React.createElement(
+              'div',
+              { className: 'fill-bus-main-content' },
+              // Individual blue box for Bus A
+              React.createElement(
+                'div',
+                { className: 'bus-container' },
+                // Top row - two columns: Bus A label + capacity text
+                React.createElement(
+                  'div',
+                  { className: 'bus-header-section' },
+                  React.createElement('div', { className: 'bus-label' }, 'Bus A'),
+                  React.createElement('div', { className: 'bus-capacity-text' }, t.busA_chip)
+                ),
+                // Bus occupancy grid above bus image
+                React.createElement(
+                  'div',
+                  { className: 'bus-grid-container' },
+                  React.createElement(
+                    'div',
+                    { className: 'bus-grid bus-a-grid' },
+                    // Use the generated cells for Bus A
+                    ...busAGridCells
+                  )
+                ),
+                // Bus image section
+                React.createElement(
+                  'div',
+                  { className: 'bus-image-section' },
+                  React.createElement('img', { src: 'assets/BusA.png', alt: 'Bus A', className: 'bus-image-horizontal' })
+                ),
+                // Feedback row below bus image
+                React.createElement(
+                  'div',
+                  { className: 'bus-feedback-row' },
+                  React.createElement('p', { className: 'bus-feedback-text' }, isAnimatingA ? 'Filling...' : 'Ready to fill')
+                )
+              ),
+              // Individual blue box for Bus B
+              React.createElement(
+                'div',
+                { className: 'bus-container' },
+                // Top row - two columns: Bus B label + capacity text
+                React.createElement(
+                  'div',
+                  { className: 'bus-header-section' },
+                  React.createElement('div', { className: 'bus-label' }, 'Bus B'),
+                  React.createElement('div', { className: 'bus-capacity-text' }, t.busB_chip)
+                ),
+                // Bus occupancy grid above bus image
+                React.createElement(
+                  'div',
+                  { className: 'bus-grid-container' },
+                  React.createElement(
+                    'div',
+                    { className: 'bus-grid bus-b-grid' },
+                    // Generate 6×5 grid for Bus B (30 cells) - unchanged
+                    Array.from({ length: 30 }, (_, index) => {
+                      const row = Math.floor(index / 6);
+                      const col = index % 6;
+                      let cellClass = 'grid-cell';
+                      let emoji = '';
+                      
+                      // Define seats (columns 1, 2, 4, 5 are seats, column 3 is pathway)
+                      if (col === 0 || col === 1 || col === 3 || col === 4) {
+                        cellClass += ' seat';
+                        emoji = '💺'; // Seat emoji
+                      } else if (col === 2) {
+                        cellClass += ' pathway';
+                        emoji = '🛣️'; // Pathway emoji
+                      }
+                      
+                      return React.createElement('div', {
+                        key: index,
+                        className: cellClass
+                      }, emoji);
+                    })
+                  )
+                ),
+                // Bus image section
+                React.createElement(
+                  'div',
+                  { className: 'bus-image-section' },
+                  React.createElement('img', { src: 'assets/BusB.png', alt: 'Bus B', className: 'bus-image-horizontal' })
+                ),
+                // Feedback row below bus image
+                React.createElement(
+                  'div',
+                  { className: 'bus-feedback-row' },
+                  React.createElement('p', { className: 'bus-feedback-text' }, 'Ready to fill')
+                )
+              ),
+              // Column 3 - Options (same width as used earlier)
+              React.createElement(
+                'div',
+                { className: 'fill-bus-options-column' },
+                React.createElement('p', null, "Options"),
+                React.createElement(
+                  'button',
+                  { 
+                    className: 'option-button', 
+                    onClick: handlers.fillBusA, // Use the new animation handler
+                    disabled: isAnimatingA      // Disable button during animation
+                  },
+                  t.fillButton
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 4: {
+        const t = texts.page5;
+        return React.createElement(
+          'div',
+          { id: 'page5', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'fill-bus-container' },
+            React.createElement('h2', { className: 'fill-bus-header' }, t.header),
+            React.createElement(
+              'div',
+              { className: 'panels-container' },
+              React.createElement(
+                'div',
+                { className: 'panel-left' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus A'),
+                  ' ' + t.busA_chip
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bus-result-area' },
+                  React.createElement('p', { className: 'standing-label' }, t.standingLabel),
+                  React.createElement(
+                    'div',
+                    { className: 'bus-and-roster-row' },
+                    React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusA1.png', alt: 'Filled Bus A' })
+                  )
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'panel-right' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus B'),
+                  ' ' + t.busB_chip
+                ),
+                React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusB.png', alt: 'Empty Bus B' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'action-column' },
+                React.createElement(
+                  'button',
+                  { className: 'fill-bus-button highlight', onClick: handlers.next },
+                  t.fillButton
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 5: {
+        const t = texts.page6;
+        return React.createElement(
+          'div',
+          { id: 'page6', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'fill-bus-container' },
+            React.createElement('h2', { className: 'fill-bus-header' }, t.header),
+            React.createElement(
+              'div',
+              { className: 'panels-container-final' },
+              React.createElement(
+                'div',
+                { className: 'panel-left final-panel' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus A'),
+                  ' ' + t.busA_chip
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bus-result-area' },
+                  React.createElement('p', { className: 'standing-label' }, t.busA_standing),
+                  React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusA1.png', alt: 'Filled Bus A' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'panel-right final-panel' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus B'),
+                  ' ' + t.busB_chip
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bus-result-area' },
+                  React.createElement('p', { className: 'standing-label' }, t.busB_standing),
+                  React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusB1.png', alt: 'Filled Bus B' })
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 6: {
+        const t = texts.page7;
+        const answer = answers && answers[6];
+        return React.createElement(
+          'div',
+          { id: 'page7', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'question-screen-container' },
+            React.createElement(
+              'div',
+              { className: 'top-bar' },
+              React.createElement('p', null, t.header)
+            ),
+            React.createElement(
+              'div',
+              { className: 'main-content final-question-layout' },
+              React.createElement(
+                'div',
+                { className: 'bus-info-column' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus A'),
+                  ' ' + t.busA_chip
+                ),
+                React.createElement('p', { className: 'standing-label final-question-standing' }, t.busA_standing),
+                React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusA1.png', alt: 'Filled Bus A' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'bus-info-column' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus B'),
+                  ' ' + t.busB_chip
+                ),
+                React.createElement('p', { className: 'standing-label final-question-standing' }, t.busB_standing),
+                React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusB1.png', alt: 'Filled Bus B' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'options-box final-question-options' },
+                React.createElement('p', null, t.options_title),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'option-button' + (answer && answer.selected === 'A' ? (answer.isCorrect ? ' selected-correct' : ' selected-incorrect') : ''),
+                    onClick: () => handlers.selectOption(6, 'A', t.correctOption)
+                  },
+                  t.option_A
+                ),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'option-button' + (answer && answer.selected === 'B' ? (answer.isCorrect ? ' selected-correct' : ' selected-incorrect') : ''),
+                    onClick: () => handlers.selectOption(6, 'B', t.correctOption)
+                  },
+                  t.option_B
+                ),
+                answer
+                  ? React.createElement(
+                      'div',
+                      {
+                        className:
+                          'feedback-box ' +
+                          (answer.isCorrect ? 'feedback-box-correct' : 'feedback-box-incorrect')
+                      },
+                      answer.isCorrect ? t.feedback_correct : t.feedback_incorrect
+                    )
+                  : null
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 7: {
+        const t = texts.page8;
+        return React.createElement(
+          'div',
+          { id: 'page8', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'info-reveal-container' },
+            React.createElement('h2', { className: 'info-header' }, t.header),
+            React.createElement(
+              'div',
+              { className: 'bus-cards-container' },
+              React.createElement(
+                'div',
+                { className: 'bus-card' },
+                React.createElement('img', { src: 'assets/BusC.png', alt: 'Bus C with 45 seats' }),
+                React.createElement('p', { className: 'caption-blue' }, t.busC_caption1),
+                React.createElement('p', { className: 'caption-yellow-green' }, t.busC_caption2)
+              ),
+              React.createElement(
+                'div',
+                { className: 'bus-card' },
+                React.createElement('img', { src: 'assets/BusD.png', alt: 'Bus D with 30 seats' }),
+                React.createElement('p', { className: 'caption-blue' }, t.busC_caption1),
+                React.createElement('p', { className: 'caption-yellow-green' }, t.busC_caption2)
+              )
+            ),
+            React.createElement('p', { className: 'concept-sentence' }, t.concept),
+            React.createElement(
+              'button',
+              { className: 'next-button', onClick: handlers.next },
+              t.nextButton
+            )
+          )
+        );
+      }
+      case 8: {
+        const t = texts.page9;
+        return React.createElement(
+          'div',
+          { id: 'page9', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'fill-bus-container' },
+            React.createElement('h2', { className: 'fill-bus-header' }, t.header),
+            React.createElement(
+              'div',
+              { className: 'panels-container' },
+              React.createElement(
+                'div',
+                { className: 'panel-left' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus C'),
+                  ' ' + t.busC_chip
+                ),
+                React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusC.png', alt: 'Empty Bus C' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'panel-right' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus D'),
+                  ' ' + t.busD_chip
+                ),
+                React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusD.png', alt: 'Empty Bus D' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'action-column' },
+                React.createElement(
+                  'button',
+                  { className: 'fill-bus-button highlight', onClick: handlers.next },
+                  t.fillButton
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 9: {
+        const t = texts.page10;
+        return React.createElement(
+          'div',
+          { id: 'page10', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'fill-bus-container' },
+            React.createElement('h2', { className: 'fill-bus-header' }, t.header),
+            React.createElement(
+              'div',
+              { className: 'panels-container' },
+              React.createElement(
+                'div',
+                { className: 'panel-left' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus C'),
+                  ' ' + t.busC_chip
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bus-result-area' },
+                  React.createElement('p', { className: 'standing-label' }, t.standingLabelC),
+                  React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusC1.png', alt: 'Filled Bus C' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'panel-right' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus B'),
+                  ' ' + t.busD_chip
+                ),
+                React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusD.png', alt: 'Empty Bus D' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'action-column' },
+                React.createElement(
+                  'button',
+                  { className: 'fill-bus-button highlight', onClick: handlers.next },
+                  t.fillButton
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 10: {
+        const t = texts.page11;
+        return React.createElement(
+          'div',
+          { id: 'page11', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'fill-bus-container' },
+            React.createElement('h2', { className: 'fill-bus-header' }, t.header),
+            React.createElement(
+              'div',
+              { className: 'panels-container' },
+              React.createElement(
+                'div',
+                { className: 'panel-left' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus C'),
+                  ' ' + t.busC_chip
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bus-result-area' },
+                  React.createElement('p', { className: 'standing-label' }, t.standingLabelC),
+                  React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusD1.png', alt: 'Filled Bus D' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'panel-right' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus D'),
+                  ' ' + t.busD_chip
+                ),
+                React.createElement(
+                  'div',
+                  { className: 'bus-result-area' },
+                  React.createElement('p', { className: 'standing-label' }, t.standingLabelD),
+                  React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusD1.png', alt: 'Filled Bus D' })
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'action-column' },
+                React.createElement(
+                  'button',
+                  { className: 'fill-bus-button highlight', onClick: handlers.next },
+                  t.fillButton
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 11: {
+        const t = texts.page12;
+        const answer = answers && answers[11];
+        return React.createElement(
+          'div',
+          { id: 'page11', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'question-screen-container' },
+            React.createElement(
+              'div',
+              { className: 'top-bar' },
+              React.createElement('p', null, t.header)
+            ),
+            React.createElement(
+              'div',
+              { className: 'main-content final-question-layout' },
+              React.createElement(
+                'div',
+                { className: 'bus-info-column' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus C'),
+                  ' ' + t.busC_chip
+                ),
+                React.createElement('p', { className: 'standing-label final-question-standing' }, t.busC_standing),
+                React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusC1.png', alt: 'Filled Bus C' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'bus-info-column' },
+                React.createElement(
+                  'div',
+                  { className: 'panel-header-chip' },
+                  React.createElement('span', null, 'Bus B'),
+                  ' ' + t.busD_chip
+                ),
+                React.createElement('p', { className: 'standing-label final-question-standing' }, t.busD_standing),
+                React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusD1.png', alt: 'Filled Bus D' })
+              ),
+              React.createElement(
+                'div',
+                { className: 'options-box final-question-options' },
+                React.createElement('p', null, t.options_title),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'option-button' + (answer && answer.selected === 'C' ? (answer.isCorrect ? ' selected-correct' : ' selected-incorrect') : ''),
+                    onClick: () => handlers.selectOption(11, 'C', t.correctOption)
+                  },
+                  t.option_C
+                ),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'option-button' + (answer && answer.selected === 'D' ? (answer.isCorrect ? ' selected-correct' : ' selected-incorrect') : ''),
+                    onClick: () => handlers.selectOption(11, 'D', t.correctOption)
+                  },
+                  t.option_D
+                ),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'option-button' + (answer && answer.selected === 'Equal' ? (answer.isCorrect ? ' selected-correct' : ' selected-incorrect') : ''),
+                    onClick: () => handlers.selectOption(11, 'Equal', t.correctOption)
+                  },
+                  t.option_Equal
+                ),
+                answer
+                  ? React.createElement(
+                      'div',
+                      {
+                        className:
+                          'feedback-box ' +
+                          (answer.isCorrect ? 'feedback-box-correct' : 'feedback-box-incorrect')
+                      },
+                      answer.isCorrect ? t.feedback_correct : t.feedback_incorrect
+                    )
+                  : null
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 12: {
+        const t = texts.page13;
+        return React.createElement(
+          'div',
+          { id: 'page13', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'info-reveal-container' },
+            React.createElement('h2', { className: 'info-header' }, t.header),
+            React.createElement('p', { className: 'concept-sentence' }, t.feedback_correct),
+            React.createElement(
+              'div',
+              { className: 'bottom-bar' },
+              React.createElement(
+                'div',
+                { className: 'nav-arrow left', onClick: handlers.prev },
+                '◀'
+              ),
+              React.createElement('p', null, t.bottomBar),
+              React.createElement(
+                'div',
+                { className: 'nav-arrow right', onClick: handlers.next },
+                '▶'
+              )
+            )
+          )
+        );
+      }
+      case 13: {
+        const t = texts.page14;
+        return React.createElement(
+          'div',
+          { id: 'page14', className: 'page' },
+          React.createElement(
+            'div',
+            { className: 'info-reveal-container' },
+            React.createElement('h2', { className: 'info-header' }, t.header),
+            React.createElement('p', { className: 'summary-line' }, t.summary_line1),
+            React.createElement('p', { className: 'summary-line' }, t.summary_line2),
+            React.createElement(
+              'button',
+              { className: 'start-button', onClick: handlers.startOver },
+              t.restart_button
+            )
+          )
+        );
+      }
+      default: {
+        return null;
+      }
+    }
+  }
+
+  // Main app component with state management
+  function App() {
+    const totalPages = 14;
+    const [pageIndex, setPageIndex] = React.useState(0);
+
+    // State for Bus A filling animation on page 4 (index 3)
+    const [filledSeatCountA, setFilledSeatCountA] = React.useState(0);
+    const [isAnimatingA, setIsAnimatingA] = React.useState(false);
+    const intervalRef = React.useRef(null);
+
+    // Effect to clean up interval and reset state when page changes
+    React.useEffect(() => {
+        // If we navigate away from page 4 (index 3), reset its animation state
+        if (pageIndex !== 3) {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+            setFilledSeatCountA(0);
+            setIsAnimatingA(false);
+        }
+    }, [pageIndex]);
+
+    // Clean up interval on component unmount
+    React.useEffect(() => {
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, []);
+
+    // Handle keyboard navigation
+    React.useEffect(() => {
+      function handleKeyDown(event) {
+        const key = event.key;
+        if (key === 'ArrowRight' || key === 'ArrowDown' || key === 'Enter') {
+          nextPage();
+        } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+          prevPage();
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }, []);
+
+    // Navigation functions
+    function nextPage() {
+      setPageIndex(prev => (prev + 1 >= totalPages ? 0 : prev + 1));
+    }
+    function prevPage() {
+      setPageIndex(prev => (prev > 0 ? prev - 1 : 0));
+    }
+    function startOver() {
+      setPageIndex(0);
+    }
+
+    // Animation handler for filling Bus A
+    function handleFillBusA() {
+        if (isAnimatingA) return; // Prevent re-triggering animation
+        setIsAnimatingA(true);
+
+        intervalRef.current = setInterval(() => {
+            setFilledSeatCountA(prevCount => {
+                // Bus A has 36 seats
+                if (prevCount >= 36) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                    // Wait for a moment before automatically going to the next page
+                    setTimeout(() => {
+                        setIsAnimatingA(false);
+                        nextPage();
+                    }, 500);
+                    return 36;
+                }
+                return prevCount + 1;
+            });
+        }, 50); // Fills one seat every 50ms
+    }
+
+    // Track user answers for assessment questions
+    const [answers, setAnswers] = React.useState({});
+
+    function handleOptionSelect(pageIdx, option, correctOption) {
+      setAnswers(prev => ({
+        ...prev,
+        [pageIdx]: {
+          selected: option,
+          isCorrect: option === correctOption
+        }
+      }));
+    }
+
+    const handlers = {
+      next: nextPage,
+      prev: prevPage,
+      startOver: startOver,
+      selectOption: handleOptionSelect,
+      fillBusA: handleFillBusA
+    };
+
+    // Use English text only (removed language switching)
+    const texts = AppText;
+
+    const pageState = { filledSeatCountA, isAnimatingA };
+    const pageElement = renderPage(pageIndex, handlers, texts, answers, pageState);
+
+    // App structure using the responsive scaling system
+    return React.createElement(
+      'div',
+      { className: 'responsive-container' },
+      React.createElement(
+        'div',
+        { className: 'responsive-wrapper' },
+        React.createElement(
+          'div',
+          { id: 'app-container' },
+          pageElement
+        )
+      )
+    );
+  }
+
+  // Global utility functions
+  window.killAnimation = function () {};
+  window.killHighlight = function () {};
+
+  // Initialize app when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const root = document.getElementById('root');
+    if (root) {
+      ReactDOM.render(App, root);
+    }
+  });
+})();

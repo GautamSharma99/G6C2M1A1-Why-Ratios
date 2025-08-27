@@ -1,0 +1,860 @@
+/* Base styles and viewport setup */
+body {
+    margin: 0;
+    font-family: sans-serif;
+    color: white;
+    background-image: url('assets/Background.png');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* React app root container */
+#root {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Responsive container - fills entire viewport */
+.responsive-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Fixed design canvas - 1920x1080 base design */
+.responsive-wrapper {
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: top left;
+    transform: scale(var(--scaleFactor)) translate(-50%, -50%);
+}
+
+/* Main app container - this gets scaled by JavaScript */
+#app-container {
+    width: 1920px;
+    height: 1080px;
+    position: relative;
+}
+
+/* Page layout - each page fills the entire 1920x1080 container */
+.page {
+    width: 1920px;
+    height: 1080px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Start screen styling */
+.start-screen-container {
+    width: 1920px;
+    height: 1080px;
+    /* Removed dark blue background - using bg image */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.start-screen-header {
+    height: 120px; /* Paint applet standard: 120px */
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.start-screen-header h1 {
+    color: #f3a953;
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.start-screen-content {
+    height: 820px; /* Paint applet standard: 820px */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 40px;
+    text-align: center;
+}
+
+.content-top {
+    margin-bottom: 60px;
+    text-align: center;
+    background-color: rgba(14, 27, 48, 0.9);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid #3c65a8;
+    max-width: 80%;
+}
+
+.content-top p {
+    font-size: 5rem;
+    margin: 30px 0;
+    line-height: 1.4;
+    color: white;
+    text-align: center;
+}
+
+.content-bottom {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.start-button {
+    background: linear-gradient(to bottom, #f3a953, #e57c21);
+    color: black;
+    border: none;
+    border-radius: 15px;
+    padding: 25px 80px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
+
+.start-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+.start-screen-footer {
+    height: 140px; /* Paint applet standard: 140px */
+    padding: 40px;
+    /* Removed border-top separation line */
+}
+
+/* Question screen layout */
+.question-screen-container {
+    width: 1920px;
+    height: 1080px;
+    /* Removed dark blue background - using bg image */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-bar {
+    height: 120px; /* Paint applet standard: 120px */
+    text-align: center;
+    color: #f3a953;
+    font-size: 40px; /* Increased by 5px from 35px */
+    font-weight: bold;
+    padding: 20px;
+    /* Removed separator border line */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-content {
+    height: 820px; /* Paint applet standard: 820px */
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px 0;
+}
+
+.question-box {
+    flex-basis: 70%;
+    padding: 40px;
+    background-color: rgba(14, 27, 48, 0.9); /* Changed to dark blue */
+    border: 3px solid #3c65a8;
+    border-radius: 20px;
+    margin: 0 20px;
+    height: 100%; /* Full height without padding reduction */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* Left align content */
+}
+
+.question-text {
+    font-size: 55px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: white;
+    margin-bottom: 2rem; /* Increased spacing between bus info and main question */
+}
+
+.main-question {
+    font-size: 55px;
+    font-weight: bold;
+    margin-top: 3rem;
+    color: white;
+}
+
+.options-box {
+    flex-basis: 25%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    gap: 0; /* Remove gap for precise height control */
+    align-items: center; /* Center align options horizontally */
+}
+
+.options-box > p {
+    font-size: 40px; /* Increased to match header font size */
+    color: white;
+    text-align: center;
+    height: 10%; /* 10% height for instruction text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-weight: bold; /* Made text bold */
+}
+
+.option-button {
+    width: 80%;
+    padding: 20px;
+    font-size: 2.5rem; /* Increased from 1.5rem for better readability */
+    font-weight: bold;
+    background-color: #f5f5f5; /* Changed to white-gray */
+    border: 2px solid #d3d3d3; /* Light gray border */
+    color: black; /* Changed to black font */
+    border-radius: 15px;
+    cursor: pointer;
+    height: 15%; /* Increased from 10% to 15% for better button size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0; /* Increased to 4px spacing above and below */
+}
+
+/* Hidden option for future use */
+.option-hidden {
+    height: 15%; /* Increased from 10% to 15% to match other options */
+    visibility: hidden;
+    margin: 4px 0; /* Increased to 4px spacing above and below */
+}
+
+/* Feedback section */
+.option-feedback {
+    height: 25%; /* Reduced from 40% to 25% to accommodate larger options */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 35px;
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 4px 0; /* Increased to 4px spacing above and below */
+}
+
+.bottom-bar {
+    height: 140px; /* Paint applet standard: 140px */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    /* Removed separator border line */
+    font-size: 40px; /* Standardized to match header and options */
+}
+
+.nav-arrow {
+    background-color: #f3a953; /* Orange color (keeping current theme) */
+    color: white;
+    width: 160px; /* Paint applet standard: fixed width */
+    height: 80px; /* Paint applet standard: fixed height */
+    border-radius: 12px; /* Paint applet standard: 12px radius */
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 24px; /* Paint applet standard: 24px */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center align icon */
+    border: none;
+    min-width: 160px; /* Ensure consistent width */
+}
+
+.bottom-bar p {
+    font-size: 40px; /* Standardized to match header and options */
+    color: white;
+    text-align: center;
+    flex: 0.7; /* Reduced by 10% from 1.0 */
+}
+
+/* Information reveal screens */
+.info-reveal-container {
+    width: 1920px;
+    height: 1080px;
+    /* Removed dark blue background - using bg image */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-header {
+    font-size: 40px; /* Standardized to match other headers */
+    font-weight: bold;
+    color: #f3a953;
+    height: 120px; /* Paint applet standard: 120px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Main content area - 60% height */
+.info-main-content {
+    height: 60%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px;
+    background-color: rgba(14, 27, 48, 0.9); /* Dark blue background */
+    border: 3px solid #3c65a8; /* Blue border */
+    border-radius: 20px; /* Rounded corners */
+    margin: 20px;
+    width: 90%; /* Increased width from default */
+    max-width: 1600px; /* Set maximum width for very large screens */
+}
+
+/* Bus information panels */
+.bus-info-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    flex-basis: 45%;
+}
+
+.bus-image {
+    max-width: 429px; /* Increased by 30% from 330px */
+    height: auto;
+}
+
+/* Make Bus A larger to match Bus B height */
+.bus-info-panel:first-child .bus-image {
+    max-width: 643px; /* Increased by 30% from 495px */
+    height: auto;
+}
+
+.bus-caption-blue {
+    color: #5dadec;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.0; /* Minimum line spacing */
+    margin-bottom: 5px; /* Very small spacing between blue and yellow-green text */
+}
+
+.bus-caption-yellow-green {
+    color: #bde452;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.0; /* Minimum line spacing */
+    margin-bottom: 20px; /* Add spacing after the complete sentence */
+}
+
+/* Bottom section - 40% height */
+.info-bottom-section {
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* Reduced from 40px to 15px for tighter spacing */
+    padding: 20px;
+}
+
+.bus-cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin: 2rem 0;
+}
+
+.bus-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bus-card img {
+    max-width: 250px;
+}
+
+.caption-blue {
+    color: #5dadec;
+    font-size: 1.2rem;
+}
+
+.caption-yellow-green {
+    color: #bde452;
+    font-size: 1.2rem;
+}
+
+.concept-sentence {
+    font-size: 55px; /* Increased to match question text size */
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    line-height: 1.1; /* Reduced line spacing for tighter text */
+    margin: 0;
+}
+
+.next-button {
+    background: linear-gradient(to bottom, #f3a953, #e57c21);
+    color: black;
+    border: none;
+    border-radius: 50px;
+    padding: 25px 100px; /* Increased padding for better button size */
+    font-size: 2.5rem; /* Increased font size */
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease;
+}
+
+.next-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* Bus filling interaction screens */
+.fill-bus-container {
+    width: 1920px;
+    height: 1080px;
+    /* Removed dark blue background - using bg image */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fill-bus-header {
+    height: 80px; /* Reduced from 120px to 80px (40px reduction) */
+    font-size: 35px; /* Reduced from 40px to 35px for better fit */
+    font-weight: bold;
+    color: #f3a953;
+    padding: 0px !important; /* Removed all padding for maximum space */
+    /* Removed separator border line */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Main content area - three columns */
+.fill-bus-main-content {
+    height: 940px; /* Increased height from 900px to 940px (more body space) */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Individual blue box containers for each bus */
+.bus-container {
+    background-color: rgba(14, 27, 48, 0.9); /* Dark blue background */
+    border: 3px solid #3c65a8; /* Blue border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 20px; /* Reduced from 30px to 20px (10px reduction) */
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Reduced from 20px to 15px (5px reduction) */
+    flex: 1; /* Each bus container takes equal width */
+    height: calc(100% - 20px); /* Height within body, accounting for margins */
+    max-height: 800px; /* Maximum height to prevent exceeding body */
+}
+
+/* Column 1 & 2 - Bus A and Bus B (equal width) */
+.bus-column {
+    flex: 1; /* Equal width for both bus columns */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+/* Bus header section - two columns */
+.bus-header-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start; /* Changed from space-between to flex-start for closer alignment */
+    align-items: center;
+    gap: 8px; /* Small gap between label and capacity text */
+    height: 35px; /* Reduced from 50px to 35px (15px reduction) */
+    width: 100%;
+}
+
+.bus-label {
+    background-color: white; /* White rectangular background */
+    color: black; /* Black font color */
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 20px; /* Add padding for rectangular appearance */
+    border-radius: 8px; /* Slight rounding for better appearance */
+    border: 2px solid #d3d3d3; /* Light border for definition */
+    display: inline-block; /* Ensure background only covers text area */
+}
+
+.bus-capacity-text {
+    color: #f3a953; /* Return to original orange color */
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Feedback section - removed, no longer needed */
+
+/* Bus image section */
+.bus-image-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Container for absolute positioned grid overlay */
+}
+
+/* Bus occupancy grid system - overlay on bus image */
+.bus-grid-container {
+    position: absolute; /* Position over the bus image */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through to bus image */
+    z-index: 10; /* Ensure grid appears above bus image */
+}
+
+.bus-grid {
+    display: grid;
+    gap: 2px; /* Increased gap for better visibility */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    border: 4px solid #00ff00; /* Strong green border around entire grid */
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for grid area */
+    padding: 5px; /* Padding around grid cells */
+}
+
+/* Bus A grid: 5 columns × 9 rows - positioned to match blue seats */
+.bus-grid.bus-a-grid {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    top: 369px; /* Moved 4px up from 373px (373px - 4px = 369px) */
+    left: calc(50% - 595px); /* Move 100px left from center */
+    width: 220px; /* 50% reduced from 576px */
+    height: 38%; /* 5% reduced from 40% (40% × 0.95 = 38%) */
+    border: 2px solid #ffffff; /* White border for Bus A grid */
+    background-color: transparent; /* Transparent background */
+}
+
+/* Bus B grid: 6 columns × 5 rows - positioned to match blue seats */
+.bus-grid.bus-b-grid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    top: 475px; /* Moved 5px up from 480px (480px - 5px = 475px) */
+    left: calc(50% + 108px); /* Move 100px right from center */
+    width: 190px; /* Reduced by 20px from 220px (220px - 20px = 200px) */
+    height: 190px; /* Increased by 10px from 180px (180px + 10px = 190px) */
+    border: 2px solid #ffffff; /* White border for Bus B grid */
+    background-color: transparent; /* Transparent background */
+}
+
+.grid-cell {
+    width: 12px; /* Larger size for better visibility */
+    height: 12px; /* Larger size for better visibility */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff !important; /* White border for all grid lines - forced with !important */
+    border-radius: 0px; /* No radius for sharp edges */
+    background-color: transparent !important; /* Transparent background - forced with !important */
+    font-size: 8px; /* Larger emoji to fit in 12px cells */
+}
+
+.grid-cell.seat {
+    background-color: transparent !important; /* Transparent background - forced with !important */
+    border-color: #ffffff !important; /* White border for seats - forced with !important */
+}
+
+.grid-cell.pathway {
+    background-color: transparent !important; /* Transparent background - forced with !important */
+    border-color: #ffffff !important; /* White border for pathway - forced with !important */
+}
+
+.grid-cell.occupied {
+    background-color: transparent !important; /* Transparent background - forced with !important */
+    border-color: #ffffff !important; /* White border for occupied seats - forced with !important */
+}
+
+.grid-cell.standing {
+    background-color: transparent !important; /* Transparent background - forced with !important */
+    border-color: #ffffff !important; /* White border for standing people - forced with !important */
+}
+
+/* Feedback row below bus image - hidden for layout purposes */
+.bus-feedback-row {
+    height: 60px; /* Fixed height for feedback area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px; /* Space above feedback row */
+}
+
+.bus-feedback-text {
+    color: transparent; /* Hidden text for layout purposes */
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    /* Removed background, border, padding for plain text appearance */
+}
+
+/* Base bus image size for all buses */
+.bus-image-horizontal {
+    max-width: 343px; /* 20% reduced from 429px (429px - 86px = 343px) */
+    height: auto;
+}
+
+/* Bus A 10% larger than Bus B - target first bus container */
+.bus-container:first-child .bus-image-horizontal {
+    max-width: 576px; /* 20% reduced from 720px (720px - 144px = 576px) */
+    height: auto;
+}
+
+/* Rotate buses 90 degrees counterclockwise */
+.bus-image-horizontal {
+    transform: rotate(-90deg);
+    transform-origin: center center;
+}
+
+/* Column 3 - Options (same width as used earlier) */
+.fill-bus-options-column {
+    flex-basis: 25%; /* Same width as options box from earlier */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the options column */
+    justify-content: center; /* Vertically center content */
+    height: 100%;
+    text-align: center; /* Center align text */
+}
+
+.panels-container {
+    height: 756px; /* 70% of 1080 */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.panel-left, .panel-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.panel-header-chip {
+    background-color: #1e3a6b;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Bus A graphic significantly larger */
+.bus-graphic-large {
+    max-width: 400px; /* Increased Bus A size for filled state */
+    object-fit: contain;
+}
+
+/* Bus B graphic maintains standard size */
+.bus-graphic-small {
+    max-width: 250px; /* Keep Bus B at original size */
+    object-fit: contain;
+}
+
+.bus-result-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.standing-label {
+    font-size: 1.2rem;
+    color: #bde452;
+}
+
+.bus-and-roster-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.roster-column img {
+    max-width: 300px;
+}
+
+.action-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fill-bus-button {
+    background: linear-gradient(to bottom, #5dadec, #3798e6);
+    color: black;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 50px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.hand-cursor {
+    max-width: 50px;
+}
+
+/* Final comparison layouts */
+.panels-container-final {
+    height: 756px; /* 70% of 1080 */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.final-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.final-question-layout {
+    height: 756px; /* 70% of 1080 */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.bus-info-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.final-question-standing {
+    font-size: 1.2rem;
+    color: #bde452;
+}
+
+.final-question-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Answer feedback styling */
+.selected-correct {
+    background-color: #38a169;
+}
+
+.selected-incorrect {
+    background-color: #e53e3e;
+}
+
+.feedback-box {
+    margin-top: 1rem;
+    background-color: rgba(255,255,255,0.1);
+    padding: 1rem;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.feedback-box-correct {
+    color: #38a169;
+}
+
+/* Summary and completion screens */
+.activity-complete-header {
+    color: #f3a953;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-text {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+.highlight-orange {
+    color: #f3a953;
+}
+
+/* Interactive highlight animation */
+.highlight {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(243, 169, 83, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(243, 169, 83, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(243, 169, 83, 0);
+    }
+}
+
+.student-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Add a little animation for each student appearing */
+    animation: pop-in 0.2s ease-out;
+}
+
+@keyframes pop-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
