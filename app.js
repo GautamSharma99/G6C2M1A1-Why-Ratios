@@ -908,28 +908,33 @@
     };
     
     // Animation handler for filling Bus A
-    const handleFillBusA = () => {
-        if (isAnimatingA) return;
-        setIsAnimatingA(true);
+// This version yields to the event loop between each update so the
+// browser can re-render.  Without the delays, mini‑react batches
+// updates and you never see the seats fill.
+const handleFillBusA = async () => {
+    if (isAnimatingA) return;
+    setIsAnimatingA(true);
 
-        let currentSeat = 0;
-        const totalSeats = 36;
-        const animationSpeed = 50;
+    const totalSeats    = 36;
+    const animationStep = 50;  // ms between each seat
 
-        function fillNextSeat() {
-            if (currentSeat < totalSeats) {
-                currentSeat++;
-                setFilledSeatCountA(currentSeat);
-                animationTimeoutRef.current = setTimeout(fillNextSeat, animationSpeed);
-            } else {
-                animationTimeoutRef.current = setTimeout(() => {
-                    setIsAnimatingA(false);
-                    nextPage();
-                }, 500);
-            }
-        }
-        fillNextSeat();
-    };
+    for (let seat = 1; seat <= totalSeats; seat++) {
+        setFilledSeatCountA(seat);
+        // wait before updating again so the previous state can be rendered
+        await new Promise(resolve => {
+            animationTimeoutRef.current = setTimeout(resolve, animationStep);
+        });
+    }
+
+    // hold the final frame briefly, then move on
+    await new Promise(resolve => {
+        animationTimeoutRef.current = setTimeout(resolve, 500);
+    });
+
+    setIsAnimatingA(false);
+    nextPage();
+};
+
 
     const handlers = {
       next: nextPage,
