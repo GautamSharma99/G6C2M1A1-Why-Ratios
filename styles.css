@@ -530,11 +530,9 @@ html, body {
 
 /* Bus image section */
 .bus-image-section {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative; /* Container for absolute positioned grid overlay */
+    position: relative;
+    width: 100%;
+    height: 300px;
 }
 
 /* Bus occupancy grid system - overlay on bus image */
@@ -550,11 +548,15 @@ html, body {
 
 .bus-grid {
     display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 2px;
     position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    padding: 5px;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
 }
 
 /* Bus A grid: 5 columns × 9 rows - positioned to match blue seats */
@@ -583,25 +585,21 @@ html, body {
 }
 
 .grid-cell {
-    width: 100%;
-    height: 100%;
+    width: 40px;
+    height: 40px;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* border: 2px solid #ffffff !important; */
-    border-radius: 0px;
-    background-color: transparent !important;
-    font-size: 8px;
 }
 
 .grid-cell.seat {
-    background-color: transparent !important; /* Transparent background - forced with !important */
-    /* border-color: #ffffff !important; */
+    background-color: rgba(200, 200, 200, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .grid-cell.pathway {
-    background-color: transparent !important; /* Transparent background - forced with !important */
-    /* border-color: #ffffff !important; */
+    background-color: transparent;
 }
 
 .grid-cell.occupied {
@@ -634,8 +632,9 @@ html, body {
 
 /* Base bus image size for all buses */
 .bus-image-horizontal {
-    max-width: 343px; /* 20% reduced from 429px (429px - 86px = 343px) */
-    height: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* Bus A 10% larger than Bus B - target first bus container */
@@ -840,11 +839,13 @@ html, body {
 }
 
 .student-icon {
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 90%;
     object-fit: contain;
-    /* Add a little animation for each student appearing */
-    animation: pop-in 0.2s ease-out;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 @keyframes pop-in {

@@ -1,5 +1,5 @@
 (function () {
-  // Design dimensions for 16:9 aspect ratio
+  // Design dim      // Handle resize events
   const DESIGN_WIDTH = 1920;
   const DESIGN_HEIGHT = 1080;
 
@@ -190,7 +190,51 @@
       }
       case 3: {
         const t = texts.page4;
-        const { filledSeatCountA = 0, isAnimatingA = false } = pageState;
+        const { 
+            filledSeatCountA = 0, 
+            isAnimatingA = false,
+            filledSeatCountB = 0,
+            isAnimatingB = false
+        } = pageState;
+
+        // Bus B Grid Cells
+        const busBGridCells = [];
+        let seatCounterB = 0;
+        for (let i = 0; i < 20; i++) {
+            const col = i % 4;
+            let cellClass = 'grid-cell';
+            let cellContent = null;
+
+            cellClass += ' seat';
+            if (seatCounterB < filledSeatCountB) {
+                cellContent = React.createElement('img', { 
+                    src: 'assets/Girl.png', 
+                    className: 'student-icon', 
+                    alt: 'student',
+                    style: {
+                        width: '100%',
+                        height: '100%',
+                        display: 'block',
+                        objectFit: 'contain',
+                        animation: 'pop-in 0.3s ease-out forwards'
+                    }
+                });
+            }
+            seatCounterB++;
+            
+            busBGridCells.push(React.createElement('div', { 
+                key: i, 
+                className: cellClass,
+                style: {
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                }
+            }, cellContent));
+        }
 
         const busAGridCells = [];
         let seatCounterA = 0;
@@ -202,13 +246,35 @@
             if (col === 0 || col === 1 || col === 3 || col === 4) {
                 cellClass += ' seat';
                 if (seatCounterA < filledSeatCountA) {
-                    cellContent = React.createElement('img', { src: 'assets/Girl.png', className: 'student-icon', alt: 'student' });
+                    cellContent = React.createElement('img', { 
+                        src: 'assets/Girl.png', 
+                        className: 'student-icon', 
+                        alt: 'student',
+                        style: {
+                            width: '100%',
+                            height: '100%',
+                            display: 'block',
+                            objectFit: 'contain',
+                            animation: 'pop-in 0.3s ease-out forwards'
+                        }
+                    });
                 }
                 seatCounterA++;
             } else {
                 cellClass += ' pathway';
             }
-            busAGridCells.push(React.createElement('div', { key: i, className: cellClass }, cellContent));
+            busAGridCells.push(React.createElement('div', { 
+                key: i, 
+                className: cellClass,
+                style: {
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                }
+            }, cellContent));
         }
 
         return React.createElement(
@@ -224,17 +290,52 @@
                         ),
                         React.createElement('div', { className: 'bus-image-section' },
                             React.createElement('img', { src: 'assets/BusA.png', alt: 'Bus A', className: 'bus-image-horizontal' }),
-                            React.createElement('div', { className: 'bus-grid bus-a-grid' }, ...busAGridCells)
+                            React.createElement('div', { 
+                                className: 'bus-grid bus-a-grid',
+                                style: {
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%) rotate(-90deg)',
+                                    width: '275px',
+                                    height: '520px',
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(5, 1fr)',
+                                    gridTemplateRows: 'repeat(9, 1fr)',
+                                    gap: '2px',
+                                    backgroundColor: 'transparent',
+                                    padding: '10px',
+                                    zIndex: 10
+                                }
+                            }, ...busAGridCells)
                         )
                     ),
-                    // Bus B Container (empty)
+                    // Bus B Container
                     React.createElement('div', { className: 'bus-container' },
                         React.createElement('div', { className: 'bus-header-section' },
                             React.createElement('div', { className: 'bus-label' }, 'Bus B'),
                             React.createElement('div', { className: 'bus-capacity-text' }, t.busB_chip)
                         ),
                         React.createElement('div', { className: 'bus-image-section' },
-                           React.createElement('img', { src: 'assets/BusB.png', alt: 'Bus B', className: 'bus-image-horizontal' })
+                           React.createElement('img', { src: 'assets/BusB.png', alt: 'Bus B', className: 'bus-image-horizontal' }),
+                           React.createElement('div', {
+                                className: 'bus-grid bus-b-grid',
+                                style: {
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%) rotate(-90deg)',
+                                    width: '200px',
+                                    height: '280px',
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gridTemplateRows: 'repeat(5, 1fr)',
+                                    gap: '2px',
+                                    backgroundColor: 'transparent',
+                                    padding: '10px',
+                                    zIndex: 10
+                                }
+                            }, busBGridCells)
                         )
                     ),
                     // Options Column
@@ -519,6 +620,98 @@
       }
       case 8: {
         const t = texts.page9;
+        const { 
+            filledSeatCountC = 0, 
+            isAnimatingC = false,
+            filledSeatCountD = 0,
+            isAnimatingD = false
+        } = pageState;
+
+        // Bus C Grid Cells
+        const busCGridCells = [];
+        let seatCounterC = 0;
+        for (let i = 0; i < 45; i++) {
+            const col = i % 5;
+            let cellClass = 'grid-cell';
+            let cellContent = null;
+
+            if (col === 0 || col === 1 || col === 3 || col === 4) {
+                cellClass += ' seat';
+                if (seatCounterC < filledSeatCountC) {
+                    cellContent = React.createElement('img', { 
+                        src: 'assets/Girl.png', 
+                        className: 'student-icon', 
+                        alt: 'student',
+                        style: {
+                            width: '100%',
+                            height: '100%',
+                            display: 'block',
+                            objectFit: 'contain',
+                            animation: 'pop-in 0.3s ease-out forwards'
+                        }
+                    });
+                }
+                seatCounterC++;
+            } else {
+                cellClass += ' pathway';
+            }
+            
+            busCGridCells.push(React.createElement('div', { 
+                key: i, 
+                className: cellClass,
+                style: {
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                }
+            }, cellContent));
+        }
+
+        // Bus D Grid Cells
+        const busDGridCells = [];
+        let seatCounterD = 0;
+        for (let i = 0; i < 30; i++) {
+            const col = i % 5;
+            let cellClass = 'grid-cell';
+            let cellContent = null;
+
+            if (col !== 2) { // Skip middle column for pathway
+                cellClass += ' seat';
+                if (seatCounterD < filledSeatCountD) {
+                    cellContent = React.createElement('img', { 
+                        src: 'assets/Girl.png', 
+                        className: 'student-icon', 
+                        alt: 'student',
+                        style: {
+                            width: '100%',
+                            height: '100%',
+                            display: 'block',
+                            objectFit: 'contain',
+                            animation: 'pop-in 0.3s ease-out forwards'
+                        }
+                    });
+                }
+                seatCounterD++;
+            } else {
+                cellClass += ' pathway';
+            }
+            
+            busDGridCells.push(React.createElement('div', { 
+                key: i, 
+                className: cellClass,
+                style: {
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative'
+                }
+            }, cellContent));
+        }
         return React.createElement(
           'div',
           { id: 'page9', className: 'page' },
@@ -538,7 +731,27 @@
                   React.createElement('span', null, 'Bus C'),
                   ' ' + t.busC_chip
                 ),
-                React.createElement('img', { className: 'bus-graphic-large', src: 'assets/BusC.png', alt: 'Empty Bus C' })
+                React.createElement('div', { className: 'bus-image-section' },
+                    React.createElement('img', { className: 'bus-image-horizontal', src: 'assets/BusC.png', alt: 'Empty Bus C' }),
+                    React.createElement('div', {
+                        className: 'bus-grid bus-c-grid',
+                        style: {
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%) rotate(-90deg)',
+                            width: '275px',
+                            height: '520px',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(5, 1fr)',
+                            gridTemplateRows: 'repeat(9, 1fr)',
+                            gap: '2px',
+                            backgroundColor: 'transparent',
+                            padding: '10px',
+                            zIndex: 10
+                        }
+                    }, busCGridCells)
+                )
               ),
               React.createElement(
                 'div',
@@ -549,7 +762,27 @@
                   React.createElement('span', null, 'Bus D'),
                   ' ' + t.busD_chip
                 ),
-                React.createElement('img', { className: 'bus-graphic-small', src: 'assets/BusD.png', alt: 'Empty Bus D' })
+                React.createElement('div', { className: 'bus-image-section' },
+                    React.createElement('img', { className: 'bus-image-horizontal', src: 'assets/BusD.png', alt: 'Empty Bus D' }),
+                    React.createElement('div', {
+                        className: 'bus-grid bus-d-grid',
+                        style: {
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%) rotate(-90deg)',
+                            width: '250px',
+                            height: '400px',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(5, 1fr)',
+                            gridTemplateRows: 'repeat(6, 1fr)',
+                            gap: '2px',
+                            backgroundColor: 'transparent',
+                            padding: '10px',
+                            zIndex: 10
+                        }
+                    }, busDGridCells)
+                )
               ),
               React.createElement(
                 'div',
@@ -877,20 +1110,51 @@
     const [pageIndex, setPageIndex] = React.useState(0);
     const [answers, setAnswers] = React.useState({});
     
-    // State for Bus A filling animation
+    // State for Bus filling animations
     const [filledSeatCountA, setFilledSeatCountA] = React.useState(0);
-    const [isAnimatingA, setIsAnimatingA] = React.useState(false);
+    const [filledSeatCountB, setFilledSeatCountB] = React.useState(0);
+    const [filledSeatCountC, setFilledSeatCountC] = React.useState(0);
+    const [filledSeatCountD, setFilledSeatCountD] = React.useState(0);
     
-    // Ref to store animation timer
-    const animationTimeoutRef = React.useRef(null);
+    const [isAnimatingA, setIsAnimatingA] = React.useState(false);
+    const [isAnimatingB, setIsAnimatingB] = React.useState(false);
+    const [isAnimatingC, setIsAnimatingC] = React.useState(false);
+    const [isAnimatingD, setIsAnimatingD] = React.useState(false);
+    
+    // Ref to store animation timers
+    const animationTimeoutRefA = React.useRef(null);
+    const animationTimeoutRefB = React.useRef(null);
+    const animationTimeoutRefC = React.useRef(null);
+    const animationTimeoutRefD = React.useRef(null);
 
-    // Reset animation state when leaving Page 4
+    // Reset animation states when leaving their respective pages
     React.useEffect(() => {
         if (pageIndex !== 3) {
             setFilledSeatCountA(0);
             setIsAnimatingA(false);
-            if (animationTimeoutRef.current) {
-                clearTimeout(animationTimeoutRef.current);
+            if (animationTimeoutRefA.current) {
+                clearTimeout(animationTimeoutRefA.current);
+            }
+        }
+        if (pageIndex !== 4) {
+            setFilledSeatCountB(0);
+            setIsAnimatingB(false);
+            if (animationTimeoutRefB.current) {
+                clearTimeout(animationTimeoutRefB.current);
+            }
+        }
+        if (pageIndex !== 8) {
+            setFilledSeatCountC(0);
+            setIsAnimatingC(false);
+            if (animationTimeoutRefC.current) {
+                clearTimeout(animationTimeoutRefC.current);
+            }
+        }
+        if (pageIndex !== 9) {
+            setFilledSeatCountD(0);
+            setIsAnimatingD(false);
+            if (animationTimeoutRefD.current) {
+                clearTimeout(animationTimeoutRefD.current);
             }
         }
     }, [pageIndex]);
@@ -922,16 +1186,82 @@ const handleFillBusA = async () => {
         setFilledSeatCountA(seat);
         // wait before updating again so the previous state can be rendered
         await new Promise(resolve => {
-            animationTimeoutRef.current = setTimeout(resolve, animationStep);
+            animationTimeoutRefA.current = setTimeout(resolve, animationStep);
         });
     }
 
     // hold the final frame briefly, then move on
     await new Promise(resolve => {
-        animationTimeoutRef.current = setTimeout(resolve, 500);
+        animationTimeoutRefA.current = setTimeout(resolve, 500);
     });
 
     setIsAnimatingA(false);
+    nextPage();
+};
+
+const handleFillBusB = async () => {
+    if (isAnimatingB) return;
+    setIsAnimatingB(true);
+
+    const totalSeats    = 20;
+    const animationStep = 50;  // ms between each seat
+
+    for (let seat = 1; seat <= totalSeats; seat++) {
+        setFilledSeatCountB(seat);
+        await new Promise(resolve => {
+            animationTimeoutRefB.current = setTimeout(resolve, animationStep);
+        });
+    }
+
+    await new Promise(resolve => {
+        animationTimeoutRefB.current = setTimeout(resolve, 500);
+    });
+
+    setIsAnimatingB(false);
+    nextPage();
+};
+
+const handleFillBusC = async () => {
+    if (isAnimatingC) return;
+    setIsAnimatingC(true);
+
+    const totalSeats    = 45;
+    const animationStep = 50;
+
+    for (let seat = 1; seat <= totalSeats; seat++) {
+        setFilledSeatCountC(seat);
+        await new Promise(resolve => {
+            animationTimeoutRefC.current = setTimeout(resolve, animationStep);
+        });
+    }
+
+    await new Promise(resolve => {
+        animationTimeoutRefC.current = setTimeout(resolve, 500);
+    });
+
+    setIsAnimatingC(false);
+    nextPage();
+};
+
+const handleFillBusD = async () => {
+    if (isAnimatingD) return;
+    setIsAnimatingD(true);
+
+    const totalSeats    = 30;
+    const animationStep = 50;
+
+    for (let seat = 1; seat <= totalSeats; seat++) {
+        setFilledSeatCountD(seat);
+        await new Promise(resolve => {
+            animationTimeoutRefD.current = setTimeout(resolve, animationStep);
+        });
+    }
+
+    await new Promise(resolve => {
+        animationTimeoutRefD.current = setTimeout(resolve, 500);
+    });
+
+    setIsAnimatingD(false);
     nextPage();
 };
 
@@ -941,10 +1271,22 @@ const handleFillBusA = async () => {
       prev: prevPage,
       startOver: startOver,
       selectOption: handleOptionSelect,
-      fillBusA: handleFillBusA
+      fillBusA: handleFillBusA,
+      fillBusB: handleFillBusB,
+      fillBusC: handleFillBusC,
+      fillBusD: handleFillBusD
     };
     
-    const pageState = { filledSeatCountA, isAnimatingA };
+    const pageState = { 
+        filledSeatCountA, 
+        isAnimatingA,
+        filledSeatCountB,
+        isAnimatingB,
+        filledSeatCountC,
+        isAnimatingC,
+        filledSeatCountD,
+        isAnimatingD 
+    };
     const pageElement = renderPage(pageIndex, handlers, AppText, answers, pageState);
 
     return React.createElement(
